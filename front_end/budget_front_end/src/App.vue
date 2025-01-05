@@ -1,18 +1,12 @@
 <template>
   <div class="layout">
-    <!-- Side Navigation -->
     <div class="side-nav">
       <SideNavigation/>
     </div>
-
-    <!-- Main Content Area -->
     <div class="main-content">
-      <!-- Top Bar -->
       <div class="top-bar">
         <TopNavigation />
       </div>
-
-      <!-- Route-specific content -->
       <div class="content">
         <router-view />
       </div>

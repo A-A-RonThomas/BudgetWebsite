@@ -16,6 +16,8 @@ class Trans(db.Model):
     # Foreign key linking to the budget_category_table
     budget_category_id = db.Column(db.Integer)
 
+    budget_data_id = db.Column(db.Integer)
+
 
 
     def __repr__(self):

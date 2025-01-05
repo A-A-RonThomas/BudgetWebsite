@@ -29,7 +29,7 @@
               <td>
                 <input
                   type="number"
-                  v-model.number="item.startingValue"
+                  v-model.number="item.starting_value"
                   placeholder="Starting Value"
                   class="form-input formatted-input"
                   @input="notifyModified"
@@ -38,7 +38,7 @@
               <td>
                 <input
                   type="number"
-                  v-model.number="item.added"
+                  v-model.number="item.plus"
                   placeholder="+"
                   class="form-input formatted-input"
                   @input="notifyModified"
@@ -47,7 +47,7 @@
               <td>
                 <input
                   type="number"
-                  v-model.number="item.subtracted"
+                  v-model.number="item.minus"
                   placeholder="-"
                   class="form-input formatted-input"
                   @input="notifyModified"
@@ -55,7 +55,7 @@
               </td>
               <td>
                 <span class="ending-value  formatted-input">
-                  {{ calculateEndingValue(item.startingValue, item.added, item.subtracted) }}
+                  {{ calculateEndingValue(item.starting_value, item.plus, item.minus) }}
                 </span>
               </td>
               <td>
@@ -87,9 +87,11 @@ export default {
     addRow() {
       const newRow = {
         name: "",
-        startingValue: 0,
-        added: 0,
-        subtracted: 0,
+        starting_value: 0,
+        plus: 0,
+        minus: 0,
+        ending_value: 0,
+        category: ""
       };
       this.$emit("add-row", newRow); // Emit to the parent to add the row
     },
@@ -97,14 +99,29 @@ export default {
       this.$emit("delete-row", index); // Emit to the parent to delete the row
     },
     calculateEndingValue(startingValue, added, subtracted) {
-      const result = startingValue + added - subtracted;
-      return Math.round(result * 100) / 100;
+      return Math.round((startingValue + added - subtracted) * 100) / 100;
     },
     notifyModified() {
       this.$emit("modified"); // Notify parent of data modification
     },
   },
+  watch: {
+    Categories: {
+      handler(newCategories) {
+        // Iterate through categories and recalculate ending_value
+        newCategories.forEach((item) => {
+          item.ending_value = this.calculateEndingValue(
+            item.starting_value,
+            item.plus,
+            item.minus
+          );
+        });
+      },
+      deep: true, // Enable deep watching for nested objects
+    },
+  },
 };
+
 </script>
   
   <style scoped>

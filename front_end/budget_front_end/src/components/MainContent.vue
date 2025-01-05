@@ -1,34 +1,27 @@
 <template>
   <div>
-    <!-- <button @click="saveBudgets" class="save-btn">Save Budget</button> -->
     
-    <BudgetCategoryTable
-      title="Fixed Expenses"
-      :Categories="categories.fixed"
-      @add-row="addRow('fixed', $event)"
-      @delete-row="deleteRow('fixed', $event)"
-      @modified="markModified"
-    />
-
-    <hr />
-
-    <BudgetCategoryTable
-      title="Variable Expenses"
-      :Categories="categories.variable"
-      @add-row="addRow('variable', $event)"
-      @delete-row="deleteRow('variable', $event)"
-      @modified="markModified"
-    />
-
-    <hr />
-
-    <SinkingFundTable
-      title="Sinking Funds"
-      :Categories="categories.sinkingFunds"
-      @add-row="addRow('sinkingFunds', $event)"
-      @delete-row="deleteRow('sinkingFunds', $event)"
-      @modified="markModified"
-    />
+    <div v-for="(non_fundItems, non_fundKey) in non_funds" :key="non_fundKey">
+      <BudgetCategoryTable
+        :title="non_fundKey"
+        :Categories="non_fundItems"
+        @update:title="updateNonFundKey(non_fundKey, $event)"
+        @add-row="addRow(non_fundKey, $event)"
+        @delete-row="deleteRow(non_fundKey, $event)"
+        @modified="markModified"
+      />
+      <hr />
+    </div>
+    <div v-for="(fundItems, fundKey) in funds" :key="fundKey">
+      <SinkingFundTable
+        :title="formatTitle(fundKey)"
+        :Categories="fundItems"
+        @add-row="addFundRow(fundKey, $event)"
+        @delete-row="deleteFundRow(fundKey, $event)"
+        @modified="markModified"
+      />
+      <hr v-if="Object.keys(funds).length > 1" />
+    </div>
 
   </div>
 </template>
@@ -61,10 +54,11 @@ export default {
 
   data() {
     return {
-      categories: {
-        fixed: [],
-        variable: [],
-        sinkingFunds: [],
+      non_funds: {
+
+      },
+      funds: {
+
       },
       currentDate: "",
       isModified: false,
@@ -80,6 +74,21 @@ export default {
 
 
   methods: {
+    updateNonFundKey(oldKey, newKey) {
+      if (oldKey !== newKey && newKey.trim() !== "") {
+        // Add the new key with the same data
+        this.non_funds[newKey] = this.non_funds[oldKey];
+
+        // Delete the old key
+        delete this.non_funds[oldKey];
+
+        this.markModified(); // Notify changes
+      }
+    },
+    formatTitle(key) {
+      // Convert camelCase to Title Case (e.g., sinkingFunds -> Sinking Funds)
+      return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+    },
     hasUnsavedChanges() {
       return this.isModified; // Check if data has been modified
     },
@@ -91,7 +100,7 @@ export default {
     async saveBudgets() {
       const budgetData = {
         date: this.currentDate,
-        budgets: this.categories,
+        budget_tables: {'non_funds': this.non_funds, 'funds': this.funds},
       };
 
       try {
@@ -107,28 +116,60 @@ export default {
     },
 
     async fetchBudgets() {
+      this.non_funds = {};
+      this.funds = {};
       try {
         const response = await axios.get(
           `http://localhost:8000/get-budget-${this.currentDate}`
         );
-        const { fixed, variable, sinkingFunds } = response.data.message;
+        var response_data = response.data.message.budget;
+        
+        for (const key in response_data.non_fund) {
+          this.non_funds[key] = response_data.non_fund[key]
+        }
 
-        this.categories.fixed = fixed || [];
-        this.categories.variable = variable || [];
-        this.categories.sinkingFunds = sinkingFunds || [];
+        for (const key in response_data.fund) {
+          this.funds[key] = response_data.fund[key]
+        }
       } catch (error) {
         console.error("Error fetching budgets:", error);
         alert("Failed to fetch budgets.");
       }
     },
 
+    async deleteBudgetItem(budgetItem, isFund) {
+      const info = {
+        item: budgetItem,
+        type: isFund
+      }
+      try {
+        await axios.post(
+          "http://127.0.0.1:8000/delete-budget-item",
+          info
+        )
+      }
+      catch (error) {
+        console.error("Error deleting budget item:", error);
+        alert("Failed to delete budget item.");
+      }
+    },
+
     addRow(type, newCategory) {
-      this.categories[type].push(newCategory);
+      this.non_funds[type].push(newCategory);
+    },
+
+    addFundRow(type, newCategory) {
+      this.funds[type].push(newCategory);
     },
 
     deleteRow(type, index) {
-      this.categories[type].splice(index, 1);
+      this.deleteBudgetItem(this.non_funds[type][index], 0)
+      this.non_funds[type].splice(index, 1);
     },
+
+    deleteFundRow(type, index) {
+      this.funds[type].splice(index,1);
+    }
   },
 
   created() {

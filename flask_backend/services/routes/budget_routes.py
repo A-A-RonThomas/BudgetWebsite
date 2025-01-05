@@ -17,3 +17,8 @@ def save_budget():
 @budget_bp.route('/get-budget-<date>', methods=['GET'])
 def get_budget(date):
     return budgetController.get_budget(date)
+
+@budget_bp.route('/delete-budget-item', methods=['POST'])
+def delete_budget_item():
+    data = request.json
+    return budgetController.delete_budget_item(data)
