@@ -35,7 +35,7 @@ export default {
 }
 
 .side-nav {
-  width: 250px;
+  width: 125px;
   background-color: #f8f9fa;
   border-right: 1px solid #ddd;
   display: flex;

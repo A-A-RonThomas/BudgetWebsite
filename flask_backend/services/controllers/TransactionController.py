@@ -70,6 +70,7 @@ class TransactionController:
 
     @staticmethod
     def get_all_purchases(year=None, month=None):
+        print("year:", year, "month:", month)
         try:
             query = Trans.query.filter(Trans.amount < 0)
 

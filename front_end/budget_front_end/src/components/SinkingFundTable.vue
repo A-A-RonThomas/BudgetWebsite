@@ -1,7 +1,15 @@
 <template>
       <div class="budget-category-table">
         <!-- Table Title -->
-        <h2 class="table-title">{{ title }}</h2>
+        <h2 class="table-title">
+          <input
+            type="text"
+            :value="title"
+            placeholder="Title"
+            class="form-input formatted-input"
+            @blur="$emit('update:title', $event.target.value)"
+          />
+        </h2>
 
         <!-- Table -->
         <table class="table">
@@ -91,7 +99,6 @@ export default {
         plus: 0,
         minus: 0,
         ending_value: 0,
-        category: ""
       };
       this.$emit("add-row", newRow); // Emit to the parent to add the row
     },
@@ -103,6 +110,10 @@ export default {
     },
     notifyModified() {
       this.$emit("modified"); // Notify parent of data modification
+    },
+    updateTitle(newTitle) {
+      this.$emit("update:title", newTitle); // Emit updated title to parent
+      this.notifyModified(); // Notify parent of modification
     },
   },
   watch: {

@@ -15,7 +15,6 @@
           <th>Name</th>
           <th>Expected</th>
           <th>Actual</th>
-          <th>Budget Category</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -49,15 +48,6 @@
             />
           </td>
           <td>
-            <input
-              type="text"
-              v-model="item.category"
-              placeholder="Category"
-              class="form-input formatted-input"
-              @input="notifyModified"
-            />
-          </td>
-          <td>
             <button @click="deleteRow(index)" class="delete-btn">Delete</button>
           </td>
         </tr>
@@ -86,15 +76,16 @@ export default {
         name: "",
         expected: 0,
         actual: 0,
-        category: "",
-        position: ""
       };
       this.$emit("add-row", newCategory); // Notify parent to add a row
       this.notifyModified(); // Notify parent of modification
     },
     deleteRow(index) {
-      this.$emit("delete-row", index); // Notify parent to delete a row
-      this.notifyModified(); // Notify parent of modification
+      const confirmed = window.confirm("Are you sure you want to delete this item? This cannot be undone.");
+      if (confirmed) {
+        this.$emit("delete-row", index); // Notify parent to delete a row
+        this.notifyModified(); // Notify parent of modification
+      }
     },
     notifyModified() {
       this.$emit("modified"); // Notify parent of data modification

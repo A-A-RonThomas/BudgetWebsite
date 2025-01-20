@@ -13,11 +13,17 @@
     name: "TopNavigation",
     computed: {
       currentMonthYear() {
-        return this.activeDate.toLocaleString("default", {
-          month: "long",
-          year: "numeric",
-        });
-      },
+      // Ensure activeDate is a Date object
+      const date = typeof this.activeDate === "string"
+        ? new Date(`${this.activeDate}-15`)
+        : this.activeDate;
+
+      // Format to "Month Year" (e.g., "January 2025")
+      return date.toLocaleString("default", {
+        month: "long",
+        year: "numeric",
+      });
+    },
       ...mapGetters(["currentDate", "activeDate"]),
     },
     methods: {

@@ -5,6 +5,7 @@ const store = createStore({
   state: {
     currentDate: new Date().toISOString().slice(0, 7),
     activeDate: new Date().toISOString().slice(0, 7), // Default value in "YYYY-MM" format
+    budgetItems: [],
   },
 
   mutations: {
@@ -14,6 +15,18 @@ const store = createStore({
 
     setActiveDate(state, newDate) {
       state.activeDate = newDate.toISOString().slice(0, 7); // Update activeDate
+    },
+
+    setBudgetItems(state, items) {
+      state.budgetItems = items;
+    },
+
+    addBudgetItem(state, item) {
+      state.budgetItems.push(item);
+    },
+
+    removeBudgetItem(state, item) {
+      state.budgetItems = state.budgetItems.filter((i) => i !== item);
     },
   },
 
@@ -30,6 +43,18 @@ const store = createStore({
         console.error("Invalid Date supplied to updateActiveDate");
       }
     },
+
+    updateBudgetItems({ commit }, items) {
+      commit('setBudgetItems', items);
+    },
+
+    addBudgetItem({ commit }, item) {
+      commit('addBudgetItem', item);
+    },
+
+    removeBudgetItem({ commit }, item) {
+      commit('removeBudgetItem', item);
+    },
   },
 
   getters: {
@@ -40,6 +65,8 @@ const store = createStore({
     activeDate(state) {
       return state.activeDate;
     },
+
+    budgetItems: (state) => state.budgetItems,
   },
 });
 

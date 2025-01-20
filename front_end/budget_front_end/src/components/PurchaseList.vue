@@ -15,16 +15,19 @@
           <tr v-for="purchase in purchases" :key="purchase.id">
               <td class="table-style">{{ purchase.date }}</td>
               <td class="table-style">{{ purchase.description }}</td>
-              <td class="table-style">${{ purchase.amount }}</td>
+              <td class="table-style">${{ purchase.amount * -1 }}</td>
               <td class="table-style">{{ titlize(purchase.account) }}</td>
               <td>
-                <input
-                  type="text"
+                <select
                   v-model="purchase.budget_category"
-                  placeholder="Budget Category"
-                  class="form-input formatted-input"
-                  />
-            </td>
+                  class="form-select formatted-input"
+                  @change="handleBudgetCategoryChange(purchase)"
+                >
+                  <option v-for="item in budgetItems" :key="item" :value="item">
+                    {{ item }}
+                  </option>
+                </select>
+              </td>
           </tr>
         </tbody>
       </table>
@@ -47,11 +50,12 @@ export default {
   data() {
     return {
         purchases: {},
+        isModified: false
     }
   },
 
   computed: {
-    ...mapGetters(["activeDate"]),
+    ...mapGetters(["budgetItems", "activeDate"]),
   },
   
   watch: {
@@ -62,19 +66,32 @@ export default {
     },
   },
 
+  beforeRouteLeave(to, from, next) {
+    saveOnExitMixin.beforeRouteLeave.call(this, to, from, () => {
+      next();
+    })
+  },
+
   methods: {
+    handleBudgetCategoryChange(purchase) {
+      this.isModified = true;
+      this.$emit('update-purchases', purchase);
+    },
+    hasUnsavedChanges() {
+      return this.isModified; // Check if data has been modified
+    },
     async fetchPurchases() {
         if (!this.activeDate) {
             console.warn("activeDate is not available yet.");
             return;
         }
         try {
-            console.log(this.activeDate);
             const response = await axios.get(
             `http://localhost:8000/transaction/get_all_purchases/${this.activeDate}`
             );
 
             this.purchases = response.data.purchases;
+
 
         } catch (error) {
             console.error("Error fetching purchases:", error);
@@ -85,6 +102,10 @@ export default {
     titlize(text) {
         return text.replace(/\b\w/g, (char) => char.toUpperCase());
     },
+    async saveBudgets(){
+      this.isModified = false;
+      console.log("Hit SaveBudgets in purchaseList View");
+    }
 
 
 },

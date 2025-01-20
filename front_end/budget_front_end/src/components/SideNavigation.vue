@@ -18,7 +18,7 @@ export default {
 .nav {
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px;
 }
 
 .nav ul {
