@@ -15,11 +15,12 @@
           <th>Name</th>
           <th>Expected</th>
           <th>Actual</th>
-          <th>Actions</th>
+          <!-- <th>Difference</th> -->
+          <!-- <th>Actions</th> -->
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in Categories" :key="index">
+        <tr v-for="(item, index) in Categories" :key="index" :class="{'bg-light-red': item.expected < item.actual}">
           <td>
             <input
               type="text"
@@ -39,16 +40,14 @@
             />
           </td>
           <td>
-            <input
-              type="number"
-              v-model.number="item.actual"
-              placeholder="Actual"
-              class="form-input formatted-input"
-              @input="notifyModified"
-            />
+            <span class="formatted-value">
+              {{ Math.round(item.actual * 100) / 100 }}
+            </span>
           </td>
-          <td>
-            <button @click="deleteRow(index)" class="delete-btn">Delete</button>
+          <td class="no-background">
+            <button @click="deleteRow(index)" class="btn btn-danger rounded-circle p-0 delete-btn">
+              X
+            </button>
           </td>
         </tr>
       </tbody>
@@ -69,6 +68,9 @@ export default {
       type: Array,
       required: true,
     },
+  },
+  computed: {
+ 
   },
   methods: {
     addRow() {
@@ -94,12 +96,18 @@ export default {
       this.$emit("update:title", newTitle); // Emit updated title to parent
       this.notifyModified(); // Notify parent of modification
     },
+    calculateEndingValue(startingValue, added) {
+      return Math.round((startingValue - added) * 100) / 100;
+    },
   },
 };
 </script>
 
 
 <style scoped>
-
+.no-background{
+  background-color: transparent !important; /* Removes background */
+  border: none !important; /* Removes table cell borders */
+}
 
 </style>

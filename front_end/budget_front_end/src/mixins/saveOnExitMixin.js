@@ -9,6 +9,7 @@ export default {
     },
   
     beforeRouteLeave(to, from, next) {
+      console.log("beforeRouteLeave triggered from mixin");
       if (this.hasUnsavedChanges()) {
         this.saveBudgets()
           .then(() => next())

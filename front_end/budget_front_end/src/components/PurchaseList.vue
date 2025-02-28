@@ -1,7 +1,7 @@
 <template>
     <div class="container mt-4">
-      <h2>Purchases</h2>
-      <table class="table table-striped table-bordered">
+      <h3 class="table-title">Purchases</h3>
+      <table class="table table-bordered">
         <thead class="thead-dark">
           <tr>
               <th>Date</th>
@@ -21,7 +21,7 @@
                 <select
                   v-model="purchase.budget_category"
                   class="form-select formatted-input"
-                  @change="handleBudgetCategoryChange(purchase)"
+                  @change="handleBudgetCategoryChange(purchases)"
                 >
                   <option v-for="item in budgetItems" :key="item" :value="item">
                     {{ item }}
@@ -61,7 +61,8 @@ export default {
   watch: {
     activeDate(newDate) {
       if (newDate){
-          this.fetchPurchases(); // Fetch budgets for the new activeDate
+          this.saveBudgets();
+          this.fetchPurchases();
       }
     },
   },
@@ -77,9 +78,11 @@ export default {
       this.isModified = true;
       this.$emit('update-purchases', purchase);
     },
+
     hasUnsavedChanges() {
       return this.isModified; // Check if data has been modified
     },
+
     async fetchPurchases() {
         if (!this.activeDate) {
             console.warn("activeDate is not available yet.");
@@ -102,12 +105,24 @@ export default {
     titlize(text) {
         return text.replace(/\b\w/g, (char) => char.toUpperCase());
     },
+
     async saveBudgets(){
-      this.isModified = false;
-      console.log("Hit SaveBudgets in purchaseList View");
+      console.log('savebudgets entered');
+      if (this.isModified){
+        console.log('this.ismodified is true so saving');
+        try {
+              await axios.post(
+              `http://localhost:8000/transaction/save_purchases`,
+              this.purchases
+              );
+              this.isModified = false;
+  
+          } catch (error) {
+              console.error("Error saving purchases:", error);
+              alert("Failed to save purchases.");
+          }
+      }
     }
-
-
 },
 
 created() {

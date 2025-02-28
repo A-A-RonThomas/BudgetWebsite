@@ -6,6 +6,7 @@ class BudgetItem(db.Model):
     expected = db.Column(db.Float)
     actual = db.Column(db.Float)
     budget_table_id = db.Column(db.Integer)
+    
 
 
 

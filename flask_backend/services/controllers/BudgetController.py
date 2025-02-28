@@ -12,7 +12,6 @@ class BudgetController:
     def save_budget(data):
         if not data:
             return jsonify({'Error': 'No data supplied'}), 400
-        print(data)
         # Check if a budget already exists for the given year and month
         budget = Budget.query.filter(func.strftime('%Y-%m', Budget.date) == data['date']).first()
 
@@ -36,7 +35,6 @@ class BudgetController:
                     db.session.commit()
                 db_budget_table.name = data['budget_tables'][budget_table_type][budget_table]['name']
                 for budget_item in data['budget_tables'][budget_table_type][budget_table]['items']:
-                    print("This:", budget_item, '\n')
                     # if the budget_table is a fund
                     if db_budget_table.isFund:
                         if 'id' not in budget_item.keys():
@@ -61,8 +59,6 @@ class BudgetController:
                     else:
                         # Handles newly entered budget_items 
                         if 'id' not in budget_item.keys():
-
-                            print("Hit the correct branch 0f if statement")
                             new_budget_item = BudgetItem(
                                 name = budget_item['name'],
                                 expected = budget_item['expected'],
@@ -135,7 +131,6 @@ class BudgetController:
     @staticmethod
     def delete_budget_item(data):
         try:
-            print(data)
             if not data['type']:
                 item = BudgetItem.query.filter(BudgetItem.id == data['item']['id'])
 

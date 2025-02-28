@@ -42,14 +42,8 @@ export default {
     BudgetCategoryTable,
     SinkingFundTable,
   },
-
   mixins: [saveOnExitMixin],
 
-  beforeRouteLeave(to, from, next) {
-    saveOnExitMixin.beforeRouteLeave.call(this, to, from, () => {
-      next();
-    })
-  },
 
   computed: {
     ...mapGetters(["activeDate"]),
@@ -80,9 +74,17 @@ export default {
     },
   },
 
+  beforeRouteLeave(to, from, next) {
+    saveOnExitMixin.beforeRouteLeave.call(this, to, from, () => {
+      next();
+    })
+  },
+
 
   methods: {
-    updateBudgetActual(purchase) {
+    updateBudgetActual(purchases) {
+      purchases.forEach(purchase => {
+        
 
       // Step 1: Check if the purchase already exists in mapped_purchases
       const existingPurchase = this.mapped_purchases.find((item) => item.id === purchase.id);
@@ -123,6 +125,7 @@ export default {
 
       updateFields(this.non_funds, "actual", this.mapped_purchases);
       updateFields(this.funds, "minus", this.mapped_purchases);
+    });
 
       // Step 4: Mark as modified and sync budget items
       this.markModified();
@@ -171,11 +174,11 @@ export default {
     },
 
     markModified() {
-      this.isModified = true; // Mark data as modified
+      this.isModified = true;
+      this.syncBudgetItems() // Mark data as modified
     },
 
     async saveBudgets() {
-      console.log("SaveBudgets called");
       const budgetData = {
         date: this.currentDate,
         budget_tables: {'non_funds': this.non_funds, 'funds': this.funds},
@@ -208,6 +211,8 @@ export default {
         for (const key in response_data.fund) {
           this.funds[key] = response_data.fund[key]
         }
+
+        this.syncBudgetItems();
         
       } catch (error) {
         console.error("Error fetching budgets:", error);
@@ -258,7 +263,6 @@ export default {
   created() {
     this.currentDate = this.activeDate;
     this.fetchBudgets().then(() => this.syncBudgetItems());
-    // console.log("From mainContent:", this.currentDate);
   },
 };
 </script>

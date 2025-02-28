@@ -13,10 +13,7 @@ class Trans(db.Model):
     # Define relationship to Account
     account = db.relationship('Account', back_populates='trans')
 
-    # Foreign key linking to the budget_category_table
-    budget_category_id = db.Column(db.Integer)
-
-    budget_item_id = db.Column(db.Integer)
+    budget_item_name = db.Column(db.String, nullable=True)
 
 
 

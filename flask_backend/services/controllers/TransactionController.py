@@ -70,7 +70,6 @@ class TransactionController:
 
     @staticmethod
     def get_all_purchases(year=None, month=None):
-        print("year:", year, "month:", month)
         try:
             query = Trans.query.filter(Trans.amount < 0)
 
@@ -93,7 +92,8 @@ class TransactionController:
                     'date': t.date.strftime('%Y-%m-%d'),
                     'description': t.description,
                     'amount': t.amount,
-                    'account': account_dict[t.account_id]
+                    'account': account_dict[t.account_id],
+                    'budget_category': t.budget_item_name
                 }
                 for t in purchases
             ]
@@ -144,3 +144,21 @@ class TransactionController:
         
         except Exception as e:
             return jsonify({'error': str(e)}), 500
+        
+    @staticmethod
+    def save_purchases(purchases):
+        if not purchases:
+            return jsonify({'error': 'No Supplied purchases'}), 400
+
+        for purchase in purchases:
+            db_trans = Trans.query.filter(Trans.id == purchase['id']).first()
+
+            if db_trans:
+                if db_trans.budget_item_name != purchase['budget_category']:
+                    print("Entered")
+                    db_trans.budget_item_name = purchase['budget_category']
+        
+        db.session.commit()
+
+
+        return jsonify({'message': 'sucess'}), 200

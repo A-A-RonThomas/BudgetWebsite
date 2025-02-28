@@ -55,3 +55,10 @@ def get_all_incomes_year(year):
 @transaction_bp.route('/get_all_incomes/<year>-<month>', methods=['GET'])
 def get_all_incomes_year_month(year, month):
     return TransactionController.get_all_incomes(year, month)
+
+
+@transaction_bp.route('/save_purchases', methods=['POST'])
+def save_purchases():
+    data = request.get_json()
+    print("Hit Save Purchases Route")
+    return TransactionController.save_purchases(data)

@@ -20,11 +20,10 @@
               <th>+</th>
               <th>-</th>
               <th>Ending Value</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in Categories" :key="index">
+            <tr v-for="(item, index) in Categories" :key="index" :class="{'bg-light-red': item.ending_value < 0}">
               <td>
                 <input
                   type="text"
@@ -53,21 +52,17 @@
                 />
               </td>
               <td>
-                <input
-                  type="number"
-                  v-model.number="item.minus"
-                  placeholder="-"
-                  class="form-input formatted-input"
-                  @input="notifyModified"
-                />
+                <span class="formatted-value">
+              {{ Math.round(item.minus * 100) / 100 }}
+            </span>
               </td>
               <td>
                 <span class="ending-value  formatted-input">
                   {{ calculateEndingValue(item.starting_value, item.plus, item.minus) }}
                 </span>
               </td>
-              <td>
-                <button @click="deleteRow(index)" class="delete-btn">Delete</button>
+              <td class="no-background">
+                <button @click="deleteRow(index)" class="btn btn-danger rounded-circle p-0 delete-btn">X</button>
               </td>
             </tr>
           </tbody>
@@ -135,7 +130,7 @@ export default {
 
 </script>
   
-  <style scoped>
+<style scoped>
 
-  </style>
+</style>
   
