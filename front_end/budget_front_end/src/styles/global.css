@@ -112,6 +112,24 @@ text-align: left;
   background-color: transparent !important; /* Keep delete button cell background clear */
 }
 
+/* Set a fixed width for the delete button column */
+td.no-background {
+  width: 40px; /* Adjust width as needed */
+  text-align: center;
+}
+
+/* Ensure the button does not affect layout when hidden */
+.delete-btn {
+  transition: opacity 0.2s ease-in-out;
+  visibility: hidden; /* Keeps the space occupied */
+  opacity: 0;
+}
+
+/* Show button when row is hovered */
+tr.hovered .delete-btn {
+  visibility: visible;
+  opacity: 1;
+}
 
   
   

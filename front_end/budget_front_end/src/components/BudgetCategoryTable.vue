@@ -20,7 +20,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in Categories" :key="index" :class="{'bg-light-red': item.expected < item.actual}">
+        <tr v-for="(item, index) in Categories" :key="index" 
+            :class="{'bg-light-red': item.ending_value < 0, 'hovered': hoveredRow === index}"
+            @mouseenter="hoveredRow = index" 
+            @mouseleave="hoveredRow = null">
           <td>
             <input
               type="text"
@@ -45,14 +48,18 @@
             </span>
           </td>
           <td class="no-background">
-            <button @click="deleteRow(index)" class="btn btn-danger rounded-circle p-0 delete-btn">
-              X
-            </button>
+                <button 
+                  v-show="hoveredRow === index" 
+                  @click="deleteRow(index)" 
+                  class="btn btn-danger rounded-circle p-0 delete-btn"
+                >
+                X
+                </button>
           </td>
         </tr>
       </tbody>
     </table>
-    <button @click="addRow" class="add-row-btn">Add New Row</button>
+    <button @click="addRow" class="add-row-btn">New Row</button>
   </div>
 </template>
 
@@ -71,6 +78,11 @@ export default {
   },
   computed: {
  
+  },
+  data() {
+    return {
+      hoveredRow: null, // Track hovered row
+    };
   },
   methods: {
     addRow() {

@@ -8,7 +8,7 @@
               <th>Description</th>
               <th>Amount</th>
               <th>Account</th>
-              <th>Budget Category</th>
+              <!-- <th>Budget Category</th> -->
           </tr>
         </thead>
         <tbody>
@@ -17,7 +17,7 @@
               <td>{{ income.description }}</td>
               <td>${{ income.amount }}</td>
               <td>{{ titlize(income.account) }}</td>
-              <td>{{ income.budget_category }}</td>
+              <!-- <td>{{ income.budget_category }}</td> -->
           </tr>
         </tbody>
       </table>

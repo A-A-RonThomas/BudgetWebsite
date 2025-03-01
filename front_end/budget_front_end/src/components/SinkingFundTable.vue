@@ -23,7 +23,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in Categories" :key="index" :class="{'bg-light-red': item.ending_value < 0}">
+            <tr v-for="(item, index) in Categories" :key="index" 
+            :class="{'bg-light-red': item.ending_value < 0, 'hovered': hoveredRow === index}"
+            @mouseenter="hoveredRow = index" 
+            @mouseleave="hoveredRow = null">
               <td>
                 <input
                   type="text"
@@ -62,14 +65,20 @@
                 </span>
               </td>
               <td class="no-background">
-                <button @click="deleteRow(index)" class="btn btn-danger rounded-circle p-0 delete-btn">X</button>
+                <button 
+                  v-show="hoveredRow === index" 
+                  @click="deleteRow(index)" 
+                  class="btn btn-danger rounded-circle p-0 delete-btn"
+                >
+                X
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
 
         <!-- Add New Row Button -->
-        <button @click="addRow" class="add-row-btn">Add New Row</button>
+        <button @click="addRow" class="add-row-btn">New Row</button>
       </div>
 </template>
 
@@ -86,6 +95,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      hoveredRow: null, // Track hovered row
+    };
+  },
   methods: {
     addRow() {
       const newRow = {
@@ -95,26 +109,21 @@ export default {
         minus: 0,
         ending_value: 0,
       };
-      this.$emit("add-row", newRow); // Emit to the parent to add the row
+      this.$emit("add-row", newRow);
     },
     deleteRow(index) {
-      this.$emit("delete-row", index); // Emit to the parent to delete the row
+      this.$emit("delete-row", index);
     },
     calculateEndingValue(startingValue, added, subtracted) {
       return Math.round((startingValue + added - subtracted) * 100) / 100;
     },
     notifyModified() {
-      this.$emit("modified"); // Notify parent of data modification
-    },
-    updateTitle(newTitle) {
-      this.$emit("update:title", newTitle); // Emit updated title to parent
-      this.notifyModified(); // Notify parent of modification
+      this.$emit("modified");
     },
   },
   watch: {
     Categories: {
       handler(newCategories) {
-        // Iterate through categories and recalculate ending_value
         newCategories.forEach((item) => {
           item.ending_value = this.calculateEndingValue(
             item.starting_value,
@@ -123,7 +132,7 @@ export default {
           );
         });
       },
-      deep: true, // Enable deep watching for nested objects
+      deep: true,
     },
   },
 };
@@ -133,4 +142,5 @@ export default {
 <style scoped>
 
 </style>
+
   
