@@ -1,5 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 db = SQLAlchemy()
@@ -10,8 +13,8 @@ class Config:
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(BASE_DIR, 'app.db')}"  # Database file in the same directory
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    BACKEND_HOST = "127.0.0.1"
-    BACKEND_PORT = "8000"
-    SECRET_KEY = "Super-Secret-Key"
+    BACKEND_HOST = os.getenv("BACKEND_HOST")
+    BACKEND_PORT = os.getenv("BACKEND_PORT")
+    SECRET_KEY = os.getenv("SECRET_KEY")
 
 
