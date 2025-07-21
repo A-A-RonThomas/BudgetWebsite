@@ -74,9 +74,6 @@ class BudgetController:
                             for key in budget_item_keys:
                                 setattr(db_budget_item, key, budget_item[key])
 
-                            
-                            
-            
             db.session.commit()
 
         return jsonify({'message': 'Save successful'}), 200

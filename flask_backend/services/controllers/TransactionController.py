@@ -155,7 +155,6 @@ class TransactionController:
 
             if db_trans:
                 if db_trans.budget_item_name != purchase['budget_category']:
-                    print("Entered")
                     db_trans.budget_item_name = purchase['budget_category']
         
         db.session.commit()
