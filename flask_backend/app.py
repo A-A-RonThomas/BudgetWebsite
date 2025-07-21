@@ -18,7 +18,7 @@ migrate = Migrate(app, db)
 
 with app.app_context():
     db.create_all()
-    account_controller.populate_accounts()
+    account_controller.populate_default_accounts()
     BACKEND_HOST = current_app.config['BACKEND_HOST']
     BACKEND_PORT = current_app.config['BACKEND_PORT']
 

@@ -5,7 +5,7 @@ from datetime import datetime
 
 class AccountController:
     @staticmethod
-    def populate_accounts():
+    def populate_default_accounts():
         accounts = Account.query.all()
 
         if not accounts:
@@ -14,6 +14,8 @@ class AccountController:
             db.session.add(Account(name='grocery'))
 
             db.session.add(Account(name='sinking fund'))
+
+            db.session.add(Account(name='credit card'))
 
             db.session.commit()
 
